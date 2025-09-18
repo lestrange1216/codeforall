@@ -1,7 +1,8 @@
 # codeforall# codeforall
+# codeforall
 # 🎭 FairStage – 공연 티켓 정가 양도 플랫폼
-
-**Author:** [Your Name]  
+ 
+**Author:** [Yerin Lee]  
 **Project Type:** Startup / MVP Prototype  
 **Focus Areas:** Ticket Exchange · Cultural Technology · Safe Transactions  
 
