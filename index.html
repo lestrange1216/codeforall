@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FairStage - 문화생활 티켓 정가 양도 플랫폼</title>
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --main-color:#4A90E2;
+      --accent:#f6f6f6;
+      --max-width:1100px;
+      --card-shadow: 0 6px 20px rgba(16,24,40,0.08);
+    }
+    *{box-sizing:border-box}
+    body{font-family: "Malgun Gothic","맑은 고딕", system-ui, Arial; color:#222; background:#fff; margin:0}
+
+    /* Header */
+    header.site-header {
+      border-bottom: 1px solid #eee;
+      background: #fff;
+    }
+    .header-container {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+    }
+    .left-section {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+    }
+    .right-section {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .logo {
+      font-family: 'Dancing Script', cursive;
+      color: var(--main-color);
+      font-size: 28px;
+      margin-right: 12px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+    }
+    .search {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .search input {
+      width: 300px;
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .search button {
+      background: var(--main-color);
+      color: #fff;
+      padding: 10px 14px;
+      border: 0;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    /* Nav */
+    nav.main-nav {
+      display: flex;
+      align-items: center;
+    }
+    nav .nav-inner {
+      display: flex;
+      gap: 18px;
+      align-items: center;
+    }
+    nav a {
+      color: #444;
+      text-decoration: none;
+      font-weight: 600;
+      padding: 6px 8px;
+      border-radius: 4px;
+    }
+    nav a:hover {
+      background: var(--accent);
+    }
+    
+    /* Category Navigation */
+    .nav-category{position:relative;display:inline-block}
+    .nav-category .sub-menu{
+      display:none;
+      position:absolute;
+      background:#fff;
+      min-width:120px;
+      box-shadow:0 2px 5px rgba(0,0,0,0.1);
+      border-radius:4px;
+      padding:8px 0;
+      z-index:1000;
+    }
+    .nav-category:hover .sub-menu{display:block}
+    .sub-menu a{
+      display:block;
+      padding:8px 16px;
+      color:#444;
+      text-decoration:none;
+      font-weight:normal;
+    }
+    .sub-menu a:hover{
+      background:var(--accent);
+    }
+    .main-category:after{
+      content:"▼";
+      font-size:8px;
+      margin-left:4px;
+      vertical-align:middle;
+    }
+
+    /* Hero / Featured musical */
+    .hero{max-width:var(--max-width);margin:22px auto;display:grid;grid-template-columns:2fr 1fr;gap:20px;padding:0 12px}
+    .hero-card{background:linear-gradient(180deg,#fff,#fbfbfb);border-radius:10px;overflow:hidden;box-shadow:var(--card-shadow);display:flex;flex-direction:column}
+    .hero-slider{position:relative;height:360px;background:#ddd}
+    .slide{position:absolute;inset:0;display:flex;align-items:flex-end;padding:24px;color:white;background-size:cover;background-position:center;transition:opacity .6s;opacity:0}
+    .slide.active{opacity:1}
+    .slide .meta{background:linear-gradient(180deg,rgba(0,0,0,0) 0%, rgba(0,0,0,0.55) 100%);padding:18px;border-radius:8px}
+    .slide h3{margin:0 0 6px;font-size:22px}
+    .slide p{margin:0;font-size:14px}
+    .slider-controls{position:absolute;right:14px;top:14px;display:flex;gap:8px}
+    .ctrl{background:rgba(0,0,0,0.45);color:#fff;border:none;padding:8px;border-radius:6px;cursor:pointer}
+
+    .mini-cards{display:flex;flex-direction:column;gap:12px}
+    .mini{background:#fff;border-radius:8px;padding:14px;box-shadow:var(--card-shadow);display:flex;gap:12px;align-items:center}
+    .mini .thumb{width:78px;height:78px;background:#eee;border-radius:6px;flex-shrink:0}
+    .mini h4{margin:0;font-size:15px}
+    .mini p{margin:4px 0 0;font-size:13px;color:#666}
+
+    /* Events grid */
+    .section{max-width:var(--max-width);margin:18px auto;padding:0 12px}
+    .section h2{font-size:18px;margin-bottom:12px}
+    .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+    .card{background:#fff;border-radius:8px;padding:12px;box-shadow:var(--card-shadow);display:flex;flex-direction:column}
+    .poster{height:160px;background:#eee;border-radius:6px;margin-bottom:10px}
+    .tag{display:inline-block;background:#f1f8f4;color:var(--green);font-weight:700;padding:6px 8px;border-radius:16px;font-size:12px;margin-bottom:8px}
+    .card h3{font-size:16px;margin:0 0 6px}
+    .meta{font-size:13px;color:#666}
+    .buy{margin-top:10px;margin-left:auto;background:var(--green);color:#fff;padding:8px 10px;border-radius:6px;border:0;cursor:pointer}
+
+    /* Landing Page */
+    .landing-page {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      position: relative;
+      width: 100%;
+      transition: opacity 0.5s ease;
+    }
+    .landing-content {
+      text-align: center;
+    }
+    .site-title {
+      font-size: 82px;
+      color: var(--main-color);
+      margin: 0;
+      cursor: pointer;
+      transition: all 0.5s ease;
+      font-family: 'Dancing Script', cursive;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+    }
+    .site-title:hover {
+      transform: scale(1.05);
+      text-shadow: 3px 3px 6px rgba(0,0,0,0.15);
+    }
+    .site-description {
+      max-width: 600px;
+      margin: 30px auto 0;
+      font-size: 20px;
+      line-height: 1.8;
+      color: #555;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+      font-family: 'Playfair Display', serif;
+    }
+    .site-description.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Scroll Indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: var(--main-color);
+      opacity: 0;
+      animation: fadeInUp 1s ease 1s forwards;
+    }
+    .scroll-indicator span {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+    .scroll-arrow {
+      animation: bounceArrow 2s infinite;
+    }
+    .scroll-arrow svg {
+      color: var(--main-color);
+    }
+
+    /* Category Section */
+    .category-section {
+      min-height: 100vh;
+      background: #fff;
+      padding: 80px 20px;
+      opacity: 0;
+      transition: all 0.5s ease;
+      transform: translateY(20px);
+    }
+    .category-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .category-grid {
+      max-width: var(--max-width);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      padding: 40px 0;
+    }
+    .category-card {
+      background: #fff;
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+    }
+    .category-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    }
+    .category-card h2 {
+      color: var(--main-color);
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-family: 'Playfair Display', serif;
+    }
+    .category-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .category-items a {
+      color: #555;
+      text-decoration: none;
+      font-size: 16px;
+      padding: 8px;
+      border-radius: 6px;
+      transition: background-color 0.2s ease;
+    }
+    .category-items a:hover {
+      background-color: var(--accent);
+      color: var(--main-color);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+      }
+      to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+      }
+    }
+    @keyframes bounceArrow {
+      0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+      }
+      40% {
+        transform: translateY(-10px);
+      }
+      60% {
+        transform: translateY(-5px);
+      }
+    }
+
+    /* Musical Top 10 */
+    .musical-top10 {
+      padding: 40px 0;
+      background: #fff;
+    }
+    .musical-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 20px;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .musical-card {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s ease;
+    }
+    .musical-card:hover {
+      transform: translateY(-5px);
+    }
+    .musical-card img {
+      width: 100%;
+      height: 300px;
+      object-fit: cover;
+    }
+    .musical-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 15px;
+      background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+      color: #fff;
+    }
+    .musical-rank {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: var(--main-color);
+      color: #fff;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    /* Baseball Schedule */
+    .baseball-schedule {
+      background: #f8f9fa;
+      padding: 40px 0;
+    }
+    .schedule-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      max-width: var(--max-width);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .game-card {
+      background: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: var(--card-shadow);
+    }
+    .game-teams {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    .game-time {
+      text-align: center;
+      color: #666;
+      font-size: 14px;
+    }
+    .game-venue {
+      margin-top: 10px;
+      text-align: center;
+      color: #888;
+      font-size: 13px;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive */
+    @media (max-width:980px){
+      .hero{grid-template-columns:1fr;}
+      .grid{grid-template-columns:repeat(2,1fr)}
+      .musical-grid{grid-template-columns:repeat(2,1fr)}
+      .search input{width:200px}
+    }
+    @media (max-width:520px){
+      .grid{grid-template-columns:1fr}
+      .musical-grid{grid-template-columns:1fr}
+      .search{flex:1}
+      .search input{width:100%}
+      .topbar{padding:10px;gap:10px}
+      .site-title{font-size:48px}
+    }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Elements
+      const siteTitle = document.querySelector('.site-title');
+      const siteDescription = document.querySelector('.site-description');
+      const landing = document.getElementById('landing');
+      const categorySection = document.getElementById('category-section');
+      const mainContent = document.getElementById('main-content');
+      const scrollIndicator = document.querySelector('.scroll-indicator');
+
+      // Show description when clicking the logo
+      siteTitle.addEventListener('click', function() {
+        if (siteDescription.classList.contains('visible')) {
+          siteDescription.classList.remove('visible');
+        } else {
+          siteDescription.classList.add('visible');
+        }
+      });
+
+      // Scroll to category section when clicking scroll indicator
+      scrollIndicator.addEventListener('click', function() {
+        const categoryOffset = categorySection.offsetTop;
+        window.scrollTo({
+          top: categoryOffset,
+          behavior: 'smooth'
+        });
+      });
+
+      // Handle scroll events
+      window.addEventListener('scroll', function() {
+        const scrollPosition = window.pageYOffset || document.documentElement.scrollTop;
+        const windowHeight = window.innerHeight;
+
+        // Show/hide category section
+        if (scrollPosition > windowHeight * 0.3) {
+          categorySection.style.display = 'block';
+          setTimeout(() => {
+            categorySection.classList.add('visible');
+          }, 50);
+        }
+
+        // Show/hide main content
+        if (scrollPosition > windowHeight * 0.8) {
+          mainContent.style.display = 'block';
+          setTimeout(() => {
+            mainContent.style.opacity = '1';
+          }, 50);
+        }
+      });
+
+      // Handle category card clicks
+      document.querySelectorAll('.category-card').forEach(card => {
+        card.addEventListener('click', function() {
+          const category = this.dataset.category;
+          mainContent.style.display = 'block';
+          mainContent.style.opacity = '1';
+          
+          const mainContentOffset = mainContent.offsetTop;
+          window.scrollTo({
+            top: mainContentOffset,
+            behavior: 'smooth'
+          });
+        });
+      });
+
+      // Set initial states
+      categorySection.style.display = 'none';
+      mainContent.style.display = 'none';
+      mainContent.style.opacity = '0';
+    });
+  </script>
+</head>
+<body>
+  <!-- Landing Page -->
+  <div class="landing-page" id="landing">
+    <div class="landing-content">
+      <h1 class="site-title">FairStage</h1>
+      <p class="site-description">
+        문화생활의 새로운 기준, FairStage에서 시작하세요.<br>
+        정가로 안전하게 거래하는 문화생활 티켓 양도 플랫폼입니다.<br>
+        공연, 전시, 스포츠 티켓을 믿을 수 있는 가격으로 만나보세요.
+      </p>
+      <div class="scroll-indicator">
+        <span>Scroll Down</span>
+        <div class="scroll-arrow">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4L12 20M12 20L18 14M12 20L6 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Navigation Section -->
+  <div class="category-section" id="category-section">
+    <div class="category-grid">
+      <div class="category-card" data-category="performance">
+        <h2>공연</h2>
+        <div class="category-items">
+          <a href="#musical">뮤지컬</a>
+          <a href="#theater">연극</a>
+          <a href="#concert">콘서트</a>
+        </div>
+      </div>
+      <div class="category-card" data-category="exhibition">
+        <h2>전시</h2>
+      </div>
+      <div class="category-card" data-category="sports">
+        <h2>스포츠</h2>
+        <div class="category-items">
+          <a href="#baseball">야구</a>
+          <a href="#soccer">축구</a>
+          <a href="#t1">T1</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Area -->
+  <div id="main-content" style="display: none;">
+    <!-- Musical Top 10 Section -->
+    <section class="musical-top10">
+      <h2 style="text-align: center; margin-bottom: 30px;">뮤지컬 TOP 10</h2>
+      <div class="musical-grid">
+        <div class="musical-card">
+          <div class="musical-rank">1</div>
+          <img src="https://example.com/musical1.jpg" alt="데스노트">
+          <div class="musical-info">
+            <h3>데스노트</h3>
+            <p>샤롯데씨어터</p>
+          </div>
+        </div>
+        <!-- More musical cards -->
+      </div>
+    </section>
+
+    <!-- Baseball Schedule Section -->
+    <section class="baseball-schedule">
+      <h2 style="text-align: center; margin-bottom: 30px;">오늘의 야구 경기</h2>
+      <div class="schedule-grid">
+        <div class="game-card">
+          <div class="game-teams">
+            <span>두산 베어스</span>
+            <strong>VS</strong>
+            <span>SSG 랜더스</span>
+          </div>
+          <div class="game-time">18:30</div>
+          <div class="game-venue">잠실야구장</div>
+        </div>
+        <!-- More game cards -->
+      </div>
+    </section>
+  </div>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 4L12 20M12 20L18 14M12 20L6 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Category Navigation (Initially Hidden) -->
+  <div class="category-section" id="category-section">
+    <div class="category-grid">
+      <div class="category-card" data-category="performance">
+        <h2>공연</h2>
+        <div class="category-items">
+          <a href="#musical">뮤지컬</a>
+          <a href="#theater">연극</a>
+          <a href="#concert">콘서트</a>
+        </div>
+      </div>
+      <div class="category-card" data-category="exhibition">
+        <h2>전시</h2>
+      </div>
+      <div class="category-card" data-category="sports">
+        <h2>스포츠</h2>
+        <div class="category-items">
+          <a href="#baseball">야구</a>
+          <a href="#soccer">축구</a>
+          <a href="#t1">T1</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header (Initially Hidden) -->
+  <header class="site-header" style="display: none;" id="main-header">
+    <div class="header-container">
+      <div class="left-section">
+        <div class="logo">FairStage</div>
+        <nav class="main-nav">
+          <div class="nav-inner">
+            <div class="nav-category">
+              <a href="#" class="main-category">공연</a>
+              <div class="sub-menu">
+                <a href="#">뮤지컬</a>
+                <a href="#">연극</a>
+                <a href="#">콘서트</a>
+              </div>
+            </div>
+            <div class="nav-category">
+              <a href="#" class="main-category">전시</a>
+            </div>
+            <div class="nav-category">
+              <a href="#" class="main-category">스포츠</a>
+              <div class="sub-menu">
+                <a href="#">야구</a>
+                <a href="#">축구</a>
+                <a href="#">T1</a>
+              </div>
+            </div>
+            <a href="#">티켓예매</a>
+          </div>
+        </nav>
+      </div>
+      <div class="right-section">
+        <div class="search" role="search">
+          <input type="search" placeholder="공연, 아티스트, 공연장 검색">
+          <button aria-label="검색">검색</button>
+        </div>
+        <div class="account">
+          <a href="#" style="text-decoration:none;color:#333;font-weight:600">로그인</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content (Initially Hidden) -->
+  <div id="main-content" style="display: none;">
+    <!-- Musical Top 10 Section -->
+    <section class="musical-top10">
+      <h2 style="text-align: center; margin-bottom: 30px;">뮤지컬 TOP 10</h2>
+      <div class="musical-grid">
+        <!-- Top 10 Musicals -->
+        <div class="musical-card">
+          <div class="musical-rank">1</div>
+          <img src="https://example.com/musical1.jpg" alt="데스노트">
+          <div class="musical-info">
+            <h3>데스노트</h3>
+            <p>샤롯데씨어터</p>
+          </div>
+        </div>
+        <div class="musical-card">
+          <div class="musical-rank">2</div>
+          <img src="https://example.com/musical2.jpg" alt="라이온킹">
+          <div class="musical-info">
+            <h3>라이온킹</h3>
+            <p>예술의전당</p>
+          </div>
+        </div>
+        <!-- Add more musical cards up to 10 -->
+      </div>
+    </section>
+
+    <!-- Baseball Schedule Section -->
+    <section class="baseball-schedule">
+      <h2 style="text-align: center; margin-bottom: 30px;">오늘의 야구 경기</h2>
+      <div class="schedule-grid">
+        <div class="game-card">
+          <div class="game-teams">
+            <span>두산 베어스</span>
+            <strong>VS</strong>
+            <span>SSG 랜더스</span>
+          </div>
+          <div class="game-time">18:30</div>
+          <div class="game-venue">잠실야구장</div>
+        </div>
+        <div class="game-card">
+          <div class="game-teams">
+            <span>LG 트윈스</span>
+            <strong>VS</strong>
+            <span>KT 위즈</span>
+          </div>
+          <div class="game-time">18:30</div>
+          <div class="game-venue">고척스카이돔</div>
+        </div>
+        <!-- Add more game cards as needed -->
+      </div>
+    </section>
+    <div class="hero-card">
+      <div class="hero-slider" id="heroSlider">
+        <div class="slide active" style="background-image:linear-gradient(0deg, rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('https://picsum.photos/1200/600?random=1')">
+          <div class="meta">
+            <h3>뮤지컬 '햄릿' — 감동의 무대</h3>
+            <p>서울 예술의전당 / 2025.10.01 ~ 2026.01.15</p>
+          </div>
+        </div>
+        <div class="slide" style="background-image:linear-gradient(0deg, rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('https://picsum.photos/1200/600?random=2')">
+          <div class="meta">
+            <h3>뮤지컬 '오페라의 유령' 내한공연</h3>
+            <p>국립극장 해오름극장 / 2025.11.05 ~ 2026.02.20</p>
+          </div>
+        </div>
+        <div class="slide" style="background-image:linear-gradient(0deg, rgba(0,0,0,0.35), rgba(0,0,0,0.35)), url('https://picsum.photos/1200/600?random=3')">
+          <div class="meta">
+            <h3>창작 뮤지컬 '봄날의 소리' — 따뜻한 이야기</h3>
+            <p>예스24스테이지 / 2025.09.20 ~ 2025.12.01</p>
+          </div>
+        </div>
+        <div class="slider-controls">
+          <button class="ctrl" data-action="prev" aria-label="이전">◀</button>
+          <button class="ctrl" data-action="next" aria-label="다음">▶</button>
+        </div>
+      </div>
+      <div style="padding:14px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <strong style="font-size:16px">오늘의 추천 뮤지컬</strong>
+          <div style="color:#666;font-size:13px;margin-top:6px">놓치기 아까운 작품을 모아봤습니다</div>
+        </div>
+        <a href="#" style="text-decoration:none;color:var(--green);font-weight:700">더보기 →</a>
+      </div>
+    </div>
+
+    <aside>
+      <div class="mini-cards">
+        <div class="mini">
+          <div class="thumb" style="background-image:url('https://picsum.photos/160/160?random=11');background-size:cover"></div>
+          <div>
+            <h4>뮤지컬 '노트르담'</h4>
+            <p>예술의전당 / 관람등급 8세 이상</p>
+          </div>
+        </div>
+        <div class="mini">
+          <div class="thumb" style="background-image:url('https://picsum.photos/160/160?random=12');background-size:cover"></div>
+          <div>
+            <h4>뮤지컬 '레미제라블'</h4>
+            <p>세종문화회관 / 초대형 캐스트</p>
+          </div>
+        </div>
+        <div class="mini">
+          <div class="thumb" style="background-image:url('https://picsum.photos/160/160?random=13');background-size:cover"></div>
+          <div>
+            <h4>창작 '그날의 기억'</h4>
+            <p>소극장 / 관람 포인트 안내</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- Event grid -->
+  <section class="section">
+    <h2>뮤지컬 전체보기</h2>
+    <div class="grid">
+      <!-- card 1 -->
+      <article class="card">
+        <div class="poster" style="background-image:url('https://picsum.photos/400/300?random=21');background-size:cover"></div>
+        <span class="tag">뮤지컬</span>
+        <h3>뮤지컬 '햄릿' (한글 캐스트)</h3>
+        <div class="meta">서울 예술의전당 · 2025.10.01</div>
+        <button class="buy">예매하기</button>
+      </article>
+
+      <!-- card 2 -->
+      <article class="card">
+        <div class="poster" style="background-image:url('https://picsum.photos/400/300?random=22');background-size:cover"></div>
+        <span class="tag">뮤지컬</span>
+        <h3>뮤지컬 '오페라의 유령'</h3>
+        <div class="meta">국립극장 · 2025.11.05</div>
+        <button class="buy">예매하기</button>
+      </article>
+
+      <!-- card 3 -->
+      <article class="card">
+        <div class="poster" style="background-image:url('https://picsum.photos/400/300?random=23');background-size:cover"></div>
+        <span class="tag">뮤지컬</span>
+        <h3>뮤지컬 '봄날의 소리'</h3>
+        <div class="meta">예스24스테이지 · 2025.09.20</div>
+        <button class="buy">예매하기</button>
+      </article>
+
+      <!-- card 4 -->
+      <article class="card">
+        <div class="poster" style="background-image:url('https://picsum.photos/400/300?random=24');background-size:cover"></div>
+        <span class="tag">뮤지컬</span>
+        <h3>뮤지컬 '레미제라블'</h3>
+        <div class="meta">세종문화회관 · 2025.12.05</div>
+        <button class="buy">예매하기</button>
+      </article>
+    </div>
+  </section>
+
+  <script>
+    // Simple hero slider logic
+    (function(){
+      const slides = Array.from(document.querySelectorAll('.hero-slider .slide'));
+      const btnPrev = document.querySelector('.ctrl[data-action="prev"]');
+      const btnNext = document.querySelector('.ctrl[data-action="next"]');
+      let idx = 0;
+      let timer = null;
+      function show(i){
+        slides.forEach((s,si)=>s.classList.toggle('active', si===i));
+        idx = i;
+      }
+      function next(){ show((idx+1) % slides.length) }
+      function prev(){ show((idx-1+slides.length) % slides.length) }
+      btnNext && btnNext.addEventListener('click', ()=>{ next(); resetTimer(); });
+      btnPrev && btnPrev.addEventListener('click', ()=>{ prev(); resetTimer(); });
+      function resetTimer(){ clearInterval(timer); timer = setInterval(next, 5000); }
+      if(slides.length>0){ timer = setInterval(next, 5000); }
+      // keyboard support
+      document.addEventListener('keydown', (e)=>{ if(e.key==='ArrowRight') next(); if(e.key==='ArrowLeft') prev(); });
+    })();
+  </script>
+</body>
+</html>
+
